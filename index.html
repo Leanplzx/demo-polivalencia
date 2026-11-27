@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Matriz de Polivalencia y Asignación — Mejora Continua</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <header class="topbar">
+        <div>
+            <h1>Matriz de Polivalencia Operativa</h1>
+            <p>Evaluación de perfiles y asignación rápida para cuellos de botella</p>
+        </div>
+        <div class="topbar-actions">
+            <button type="button" id="btn-exportar" class="btn btn-success">Exportar Matriz (.xls)</button>
+            <button type="button" id="btn-ejemplos" class="btn btn-secondary">Restaurar ejemplos</button>
+        </div>
+    </header>
+
+    <main class="container">
+        <div id="alerta" class="alerta oculto"></div>
+
+        <!-- KPIs rápidos -->
+        <section class="kpis">
+            <div class="kpi-card">
+                <span>Dotación Registrada</span>
+                <strong id="kpi-total">0</strong>
+            </div>
+            <div class="kpi-card">
+                <span>Disponibles Ahora</span>
+                <strong id="kpi-disponibles">0</strong>
+            </div>
+            <div class="kpi-card">
+                <span>Perfiles Polivalentes (≥2 áreas)</span>
+                <strong id="kpi-polivalentes">0</strong>
+            </div>
+            <div class="kpi-card">
+                <span>Área Más Crítica (menos expertos)</span>
+                <strong id="kpi-critica">-</strong>
+            </div>
+        </section>
+
+        <!-- Simulador de Cuello de Botella -->
+        <section class="card card-highlight">
+            <h2>⚡ Asistente de Cuellos de Botella (Asignación Rápida)</h2>
+            <p class="subtexto">Selecciona el área crítica y el sistema prioriza al personal disponible con mayor
+                desempeño.</p>
+            <div class="simulador-grid">
+                <label>
+                    Área / Línea con Cuello de Botella
+                    <select id="sim-area">
+                        <option value="jarabes">Jarabes</option>
+                        <option value="comprimidos">Comprimidos</option>
+                        <option value="inyectables">Inyectables</option>
+                        <option value="cremas">Cremas</option>
+                        <option value="empaque">Empaque</option>
+                    </select>
+                </label>
+                <label>
+                    Turno
+                    <select id="sim-turno">
+                        <option value="TODOS">Todos los turnos</option>
+                        <option value="Turno A">Turno A</option>
+                        <option value="Turno B">Turno B</option>
+                    </select>
+                </label>
+                <label>
+                    Personas requeridas
+                    <input type="number" id="sim-cantidad" min="1" max="15" value="2" />
+                </label>
+                <div class="sim-btn-wrap">
+                    <button type="button" id="btn-simular" class="btn btn-primary">Buscar Mejor Equipo</button>
+                </div>
+            </div>
+
+            <div id="resultado-simulador" class="resultado-sim oculto"></div>
+        </section>
+
+        <!-- Registro / Edición de Perfil -->
+        <section class="card">
+            <h2>Registrar / Actualizar Perfil de Trabajador</h2>
+            <form id="form-perfil" class="grid-form">
+                <label>
+                    Nombre Completo *
+                    <input type="text" id="nombre" placeholder="Ej: Carlos Muñoz" required />
+                </label>
+                <label>
+                    Turno *
+                    <select id="turno">
+                        <option value="Turno A">Turno A</option>
+                        <option value="Turno B">Turno B</option>
+                    </select>
+                </label>
+                <label>
+                    Estado Actual *
+                    <select id="estado">
+                        <option value="Disponible">Disponible</option>
+                        <option value="En apoyo">En apoyo</option>
+                        <option value="Ausente">Ausente</option>
+                    </select>
+                </label>
+                <label>
+                    Jarabes (0-4)
+                    <select id="jarabes">
+                        <option value="0">0 - Sin exp.</option>
+                        <option value="1">1 - En entrenamiento</option>
+                        <option value="2">2 - Autónomo</option>
+                        <option value="3">3 - Alto desempeño</option>
+                        <option value="4">4 - Capacitador</option>
+                    </select>
+                </label>
+                <label>
+                    Comprimidos (0-4)
+                    <select id="comprimidos">
+                        <option value="0">0 - Sin exp.</option>
+                        <option value="1">1 - En entrenamiento</option>
+                        <option value="2">2 - Autónomo</option>
+                        <option value="3">3 - Alto desempeño</option>
+                        <option value="4">4 - Capacitador</option>
+                    </select>
+                </label>
+                <label>
+                    Inyectables (0-4)
+                    <select id="inyectables">
+                        <option value="0">0 - Sin exp.</option>
+                        <option value="1">1 - En entrenamiento</option>
+                        <option value="2">2 - Autónomo</option>
+                        <option value="3">3 - Alto desempeño</option>
+                        <option value="4">4 - Capacitador</option>
+                    </select>
+                </label>
+                <label>
+                    Cremas (0-4)
+                    <select id="cremas">
+                        <option value="0">0 - Sin exp.</option>
+                        <option value="1">1 - En entrenamiento</option>
+                        <option value="2">2 - Autónomo</option>
+                        <option value="3">3 - Alto desempeño</option>
+                        <option value="4">4 - Capacitador</option>
+                    </select>
+                </label>
+                <label>
+                    Empaque (0-4)
+                    <select id="empaque">
+                        <option value="0">0 - Sin exp.</option>
+                        <option value="1">1 - En entrenamiento</option>
+                        <option value="2">2 - Autónomo</option>
+                        <option value="3">3 - Alto desempeño</option>
+                        <option value="4">4 - Capacitador</option>
+                    </select>
+                </label>
+                <label class="full-width">
+                    Fortaleza / Observación Técnica
+                    <input type="text" id="observacion" placeholder="Ej: Muy rápido en encajado y control de peso" />
+                </label>
+                <div class="full-width form-actions">
+                    <button type="submit" class="btn btn-primary">Guardar Perfil</button>
+                </div>
+            </form>
+        </section>
+
+        <!-- Tabla Matriz -->
+        <section class="card">
+            <div class="table-header">
+                <h2>Matriz General de Polivalencia</h2>
+                <div class="filtros">
+                    <input type="text" id="buscador" placeholder="Buscar trabajador o fortaleza..." />
+                    <select id="filtroTurno">
+                        <option value="TODOS">Todos los turnos</option>
+                        <option value="Turno A">Turno A</option>
+                        <option value="Turno B">Turno B</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="leyenda">
+                <span><i class="lvl lvl-0">0</i> Sin exp.</span>
+                <span><i class="lvl lvl-1">1</i> Entrenamiento</span>
+                <span><i class="lvl lvl-2">2</i> Autónomo</span>
+                <span><i class="lvl lvl-3">3</i> Alto desempeño</span>
+                <span><i class="lvl lvl-4">4</i> Capacitador</span>
+            </div>
+
+            <div class="table-wrapper">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Trabajador</th>
+                            <th>Turno</th>
+                            <th>Estado</th>
+                            <th>Jarabes</th>
+                            <th>Comprimidos</th>
+                            <th>Inyectables</th>
+                            <th>Cremas</th>
+                            <th>Empaque</th>
+                            <th>Índice Poliv.</th>
+                            <th>Fortaleza / Observación</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tabla-body"></tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>
